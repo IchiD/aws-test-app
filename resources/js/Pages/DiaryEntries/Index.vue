@@ -27,9 +27,7 @@
                         v-show="showNewEntryForm"
                         class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6"
                     >
-                        <h3 class="text-lg font-semibold mb-4">
-                            新規エントリー
-                        </h3>
+                        <h3 class="text-lg font-semibold mb-4">新規作成</h3>
                         <form @submit.prevent="submit" class="space-y-4">
                             <div>
                                 <label
