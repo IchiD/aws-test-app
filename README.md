@@ -258,26 +258,52 @@ tar -czf backup.tar.gz /var/www/diary-app
 
 MIT License
 
-## 変更履歴
+## 手動デプロイの手順
 
-### 2024-03-16
+コードを変更した後、以下の手順で本番環境に反映させることができます：
 
--   日記フォームのヘッダーテキストを「新規エントリー」から「新規作成」に変更
-    -   変更ファイル: `resources/js/Pages/DiaryEntries/Index.vue`
-    -   デプロイ手順:
-        1. ローカルでの変更をコミット: `git add resources/js/Pages/DiaryEntries/Index.vue && git commit -m "日記フォームのヘッダーテキストを変更"`
-        2. GitHub にプッシュ: `git push origin main`
-        3. EC2 インスタンスでデプロイ:
-            ```bash
-            cd /var/www/test-app
-            sudo git reset --hard
-            sudo git pull origin main
-            sudo composer install --no-dev --optimize-autoloader
-            sudo npm ci
-            sudo npm run build
-            sudo chown -R nginx:nginx .
-            sudo chmod -R 775 storage bootstrap/cache
-            sudo systemctl restart php-fpm
-            sudo systemctl restart nginx
-            ```
-        4. ブラウザでの確認: `https://da.dvg.jp` にアクセスし、日記の新規作成フォームを開いて変更を確認
+1. ローカルでの作業:
+
+```bash
+# 変更をステージングに追加
+git add .
+
+# 変更をコミット
+git commit -m "変更内容の説明"
+
+# GitHubにプッシュ
+git push origin main
+```
+
+2. EC2 インスタンスでのデプロイ:
+
+```bash
+# EC2インスタンスに接続
+ssh -i ~/.ssh/test-app-key.pem ec2-user@ec2-54-252-196-67.ap-southeast-2.compute.amazonaws.com
+
+# アプリケーションディレクトリに移動
+cd /var/www/test-app
+
+# 最新のコードを取得
+sudo git pull origin main
+
+# 依存関係のインストール
+sudo composer install --no-dev --optimize-autoloader
+sudo npm ci
+sudo npm run build
+
+# パーミッションの設定
+sudo chown -R nginx:nginx .
+sudo chmod -R 775 storage bootstrap/cache
+
+# サービスの再起動
+sudo systemctl restart php-fpm
+sudo systemctl restart nginx
+```
+
+注意事項:
+
+-   コードをプッシュする前に、必ずローカルでテストを行ってください
+-   本番環境の.env ファイルは変更しないように注意してください
+-   デプロイ後は、アプリケーションが正常に動作することを確認してください
+-   ブラウザのキャッシュをクリアする必要がある場合があります
