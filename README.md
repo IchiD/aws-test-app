@@ -257,3 +257,27 @@ tar -czf backup.tar.gz /var/www/diary-app
 ## ライセンス
 
 MIT License
+
+## 変更履歴
+
+### 2024-03-16
+
+-   日記フォームのヘッダーテキストを「新規エントリー」から「新規作成」に変更
+    -   変更ファイル: `resources/js/Pages/DiaryEntries/Index.vue`
+    -   デプロイ手順:
+        1. ローカルでの変更をコミット: `git add resources/js/Pages/DiaryEntries/Index.vue && git commit -m "日記フォームのヘッダーテキストを変更"`
+        2. GitHub にプッシュ: `git push origin main`
+        3. EC2 インスタンスでデプロイ:
+            ```bash
+            cd /var/www/test-app
+            sudo git reset --hard
+            sudo git pull origin main
+            sudo composer install --no-dev --optimize-autoloader
+            sudo npm ci
+            sudo npm run build
+            sudo chown -R nginx:nginx .
+            sudo chmod -R 775 storage bootstrap/cache
+            sudo systemctl restart php-fpm
+            sudo systemctl restart nginx
+            ```
+        4. ブラウザでの確認: `https://da.dvg.jp` にアクセスし、日記の新規作成フォームを開いて変更を確認
