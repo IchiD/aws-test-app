@@ -205,3 +205,59 @@ sudo systemctl restart nginx
 ## ライセンス
 
 MIT License
+
+## Remote-SSH での開発
+
+### 設定手順
+
+1. VS Code または Cursor に Remote-SSH 拡張機能をインストール
+
+2. `~/.ssh/config` に以下の設定を追加:
+
+```bash
+Host aws-test-app
+    HostName ec2-54-252-196-67.ap-southeast-2.compute.amazonaws.com
+    User ec2-user
+    IdentityFile ~/.ssh/test-app-key.pem
+    ForwardAgent yes
+```
+
+3. 接続手順:
+    - コマンドパレットを開く (Cmd+Shift+P)
+    - "Remote-SSH: Connect to Host..." を選択
+    - `aws-test-app` を選択
+    - `/var/www/test-app` フォルダを開く
+
+### セキュリティ上の注意点
+
+Remote-SSH を使用する際は、以下のセキュリティ対策を必ず実施してください：
+
+1. アクセス制限
+
+    - 開発用の特定の IP アドレスからのみ SSH アクセスを許可
+    - EC2 のセキュリティグループで接続元 IP を制限
+    - 本番環境での直接編集は原則禁止
+
+2. 認証情報の管理
+
+    - SSH 鍵は適切な権限設定で保管 (chmod 600)
+    - パスフレーズ付きの鍵を使用
+    - 共有の開発環境では鍵を使い回さない
+
+3. 作業ルール
+
+    - 本番環境での直接的なファイル編集は避け、GitHub を経由したデプロイを使用
+    - データベースへの直接アクセスは必要最小限に制限
+    - 重要な設定ファイル（.env 等）の変更は慎重に実施
+
+4. 監査とモニタリング
+    - SSH アクセスログを定期的に確認
+    - 不審なアクセスの監視
+    - 作業履歴の記録
+
+推奨される開発フロー：
+
+1. ローカル環境で開発
+2. GitHub にプッシュ
+3. CI/CD パイプラインを通じてデプロイ
+4. Remote-SSH は緊急時やデバッグ時のみ使用
