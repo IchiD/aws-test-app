@@ -37,15 +37,25 @@ class TaskController extends Controller
    */
   public function store(Request $request)
   {
+    \Log::info('Task creation request received', ['request' => $request->all()]);
+
     $validated = $request->validate([
       'title' => 'required|string|max:255',
       'description' => 'nullable|string',
       'due_date' => 'nullable|date',
     ]);
 
-    $request->user()->tasks()->create($validated);
+    $task = $request->user()->tasks()->create($validated);
+    \Log::info('Task created', ['task' => $task]);
 
-    return redirect(route('tasks.index'));
+    // 最新のタスクリストを取得して返す
+    $tasks = $request->user()->tasks()
+      ->orderBy('created_at', 'desc')
+      ->get();
+
+    return redirect(route('tasks.index'))->with([
+      'tasks' => $tasks,
+    ]);
   }
 
   /**

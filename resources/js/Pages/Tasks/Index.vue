@@ -92,13 +92,28 @@ const editForm = useForm({
 const editingTask = ref(null);
 
 const submit = () => {
-    form.post(route("tasks.store"), {
+    console.log("Submitting form data:", form.data());
+    form.transform((data) => {
+        console.log("Transformed data:", data);
+        return {
+            ...data,
+            _method: "POST",
+        };
+    }).post(route("tasks.store"), {
+        preserveState: true,
         onSuccess: (page) => {
-            // 新しく追加されたタスクをレスポンスから取得して、ローカルのリストに追加
-            if (page.props.flash && page.props.flash.task) {
-                tasksList.unshift(page.props.flash.task); // 先頭に追加
+            console.log("Success response:", page);
+            // ページのpropsから最新のタスクリストを取得
+            const latestTasks = page.props.tasks;
+            if (latestTasks && Array.isArray(latestTasks)) {
+                // タスクリストを更新
+                tasksList.splice(0, tasksList.length, ...latestTasks);
+                console.log("Updated tasks list:", tasksList);
             }
             form.reset();
+        },
+        onError: (errors) => {
+            console.error("Error submitting task:", errors);
         },
     });
 };
