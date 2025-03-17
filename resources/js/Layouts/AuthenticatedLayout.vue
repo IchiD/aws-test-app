@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import CustomAppLogo from "@/Components/CustomAppLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
@@ -13,16 +14,22 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
-            <nav class="border-b border-gray-100 bg-white">
+            <!-- 改良されたスタイリッシュなヘッダー -->
+            <nav
+                class="bg-gradient-to-r from-indigo-800 via-purple-800 to-indigo-900 shadow-md"
+            >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800"
+                                <Link
+                                    :href="route('dashboard')"
+                                    class="transition duration-300 ease-in-out hover:opacity-80"
+                                >
+                                    <CustomAppLogo
+                                        class="block h-9 w-auto text-white"
                                     />
                                 </Link>
                             </div>
@@ -34,12 +41,16 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
+                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     Dashboard
                                 </NavLink>
                                 <NavLink
                                     :href="route('tasks.index')"
                                     :active="route().current('tasks.index')"
+                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     タスク管理
                                 </NavLink>
@@ -48,6 +59,8 @@ const showingNavigationDropdown = ref(false);
                                     :active="
                                         route().current('diary-entries.index')
                                     "
+                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     日記
                                 </NavLink>
@@ -62,7 +75,7 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-opacity-20 bg-white px-3 py-2 text-sm font-medium leading-4 text-white transition duration-150 ease-in-out hover:bg-opacity-30 focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -107,7 +120,7 @@ const showingNavigationDropdown = ref(false);
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-200 transition duration-150 ease-in-out hover:bg-indigo-700 hover:text-white focus:bg-indigo-700 focus:text-white focus:outline-none"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -155,42 +168,49 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
+                            class="text-white hover:bg-indigo-700"
                         >
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('tasks.index')"
                             :active="route().current('tasks.index')"
+                            class="text-white hover:bg-indigo-700"
                         >
                             タスク管理
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('diary-entries.index')"
                             :active="route().current('diary-entries.index')"
+                            class="text-white hover:bg-indigo-700"
                         >
                             日記
                         </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
-                    <div class="border-t border-gray-200 pb-1 pt-4">
+                    <div class="border-t border-indigo-700 pb-1 pt-4">
                         <div class="px-4">
-                            <div class="text-base font-medium text-gray-800">
+                            <div class="text-base font-medium text-white">
                                 {{ $page.props.auth.user.name }}
                             </div>
-                            <div class="text-sm font-medium text-gray-500">
+                            <div class="text-sm font-medium text-indigo-200">
                                 {{ $page.props.auth.user.email }}
                             </div>
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
+                            <ResponsiveNavLink
+                                :href="route('profile.edit')"
+                                class="text-white hover:bg-indigo-700"
+                            >
                                 Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
+                                class="text-white hover:bg-indigo-700"
                             >
                                 Log Out
                             </ResponsiveNavLink>
