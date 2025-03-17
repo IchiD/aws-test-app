@@ -6,7 +6,7 @@
             <template #header>
                 <div class="flex justify-between items-center">
                     <h2
-                        class="font-semibold text-xl text-gray-800 leading-tight"
+                        class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
                     >
                         日記
                     </h2>
@@ -25,7 +25,7 @@
                     <!-- 新規エントリーフォーム -->
                     <div
                         v-show="showNewEntryForm"
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6 transition-all duration-500 transform origin-top"
+                        class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6 transition-all duration-500 transform origin-top"
                         :class="{
                             'max-h-[1000px] opacity-100 scale-100':
                                 showNewEntryForm,
@@ -37,7 +37,7 @@
                         }"
                     >
                         <h3
-                            class="text-lg font-semibold mb-4 transition-all duration-500"
+                            class="text-lg font-semibold mb-4 transition-all duration-500 text-gray-900 dark:text-gray-100"
                             :class="{
                                 'opacity-100 translate-y-0': showFormElements,
                                 'opacity-0 -translate-y-4': !showFormElements,
@@ -58,7 +58,7 @@
                             >
                                 <label
                                     for="content"
-                                    class="block text-sm font-medium text-gray-700"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                     >内容</label
                                 >
                                 <textarea
@@ -81,7 +81,7 @@
                             >
                                 <label
                                     for="mood"
-                                    class="block text-sm font-medium text-gray-700"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                     >気分</label
                                 >
                                 <select
@@ -107,7 +107,7 @@
                             >
                                 <label
                                     for="entry_date"
-                                    class="block text-sm font-medium text-gray-700"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                     >日付</label
                                 >
                                 <input
@@ -129,7 +129,7 @@
                                 :style="{ transitionDelay: '400ms' }"
                             >
                                 <label
-                                    class="block text-sm font-medium text-gray-700"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                                     >タグ</label
                                 >
                                 <div class="mt-1 flex flex-wrap gap-2">
@@ -197,7 +197,7 @@
 
                     <!-- フィルターと検索 -->
                     <div
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6 transition-all duration-500 opacity-0"
+                        class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6 transition-all duration-500 opacity-0"
                         :class="{ 'opacity-100 animate-fade-in': isLoaded }"
                         :style="{ transitionDelay: '200ms' }"
                     >
@@ -295,7 +295,7 @@
                                 monthEntries, month, index
                             ) in filteredEntries"
                             :key="month"
-                            class="bg-white overflow-hidden shadow-sm sm:rounded-lg opacity-0 transform transition-all duration-500"
+                            class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg opacity-0 transform transition-all duration-500"
                             :class="{ 'animate-slide-up': isLoaded }"
                             :style="{
                                 transitionDelay: `${300 + index * 150}ms`,
@@ -306,17 +306,21 @@
                             }"
                         >
                             <div
-                                class="p-4 bg-gray-50 border-b border-gray-200"
+                                class="p-4 bg-gray-50 border-b border-gray-200 dark:border-gray-700"
                             >
-                                <h3 class="text-lg font-semibold">
+                                <h3
+                                    class="text-lg font-semibold text-gray-900 dark:text-gray-100"
+                                >
                                     {{ formatMonthYear(month) }}
                                 </h3>
                             </div>
-                            <div class="divide-y divide-gray-200">
+                            <div
+                                class="divide-y divide-gray-200 dark:divide-gray-700"
+                            >
                                 <div
                                     v-for="(entry, entryIndex) in monthEntries"
                                     :key="entry.id"
-                                    class="p-6 hover:bg-gray-50 transition-all duration-300"
+                                    class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300"
                                     :style="{
                                         transitionDelay: `${400 + entryIndex * 50}ms`,
                                     }"
@@ -324,14 +328,20 @@
                                     <div
                                         class="flex justify-between items-start mb-2"
                                     >
-                                        <div class="text-sm text-gray-500">
+                                        <div
+                                            class="text-sm text-gray-500 dark:text-gray-400"
+                                        >
                                             {{ formatDate(entry.entry_date) }}
                                         </div>
-                                        <div class="text-xl">
+                                        <div
+                                            class="text-xl text-gray-900 dark:text-gray-100"
+                                        >
                                             {{ entry.mood }}
                                         </div>
                                     </div>
-                                    <div class="mb-4 whitespace-pre-wrap">
+                                    <div
+                                        class="mb-4 whitespace-pre-wrap text-gray-700 dark:text-gray-300"
+                                    >
                                         {{ entry.content }}
                                     </div>
                                     <div
@@ -341,7 +351,7 @@
                                         <span
                                             v-for="tag in entry.tags"
                                             :key="tag"
-                                            class="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded-full transition-all duration-300 hover:bg-gray-200"
+                                            class="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded-full transition-all duration-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-300"
                                         >
                                             {{ tag }}
                                         </span>
@@ -349,13 +359,13 @@
                                     <div class="flex justify-end space-x-2">
                                         <button
                                             @click="editEntry(entry)"
-                                            class="text-indigo-600 hover:text-indigo-800 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50"
                                         >
                                             編集
                                         </button>
                                         <button
                                             @click="destroy(entry.id)"
-                                            class="text-red-600 hover:text-red-800 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50"
+                                            class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50"
                                         >
                                             削除
                                         </button>
@@ -370,102 +380,124 @@
             <!-- 編集モーダル -->
             <div
                 v-if="showEditModal"
-                class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 transition-all duration-300 animate-fade-in z-50"
+                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
             >
                 <div
-                    class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 transition-all duration-300 transform animate-bounce-in"
+                    class="bg-white dark:bg-gray-800 rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto transition-all transform duration-300"
+                    :class="{
+                        'scale-100 opacity-100': isModalContentVisible,
+                        'scale-95 opacity-0': !isModalContentVisible,
+                    }"
                 >
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold">日記を編集</h3>
-                        <button
-                            @click="closeEditModal"
-                            class="text-gray-500 hover:text-gray-700 transition-all duration-300 hover:rotate-90"
-                        >
-                            <span class="text-2xl">&times;</span>
-                        </button>
-                    </div>
-                    <form @submit.prevent="updateEntry" class="space-y-4">
-                        <div>
-                            <label
-                                for="edit_content"
-                                class="block text-sm font-medium text-gray-700"
-                                >内容</label
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3
+                                class="text-lg font-medium text-gray-900 dark:text-gray-100"
                             >
-                            <textarea
-                                v-model="editForm.content"
-                                id="edit_content"
-                                rows="4"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
-                            ></textarea>
-                        </div>
-                        <div>
-                            <label
-                                for="edit_mood"
-                                class="block text-sm font-medium text-gray-700"
-                                >気分</label
+                                日記を編集
+                            </h3>
+                            <button
+                                @click="closeEditModal"
+                                class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-all duration-300"
                             >
-                            <select
-                                v-model="editForm.mood"
-                                id="edit_mood"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
-                            >
-                                <option value="">選択してください</option>
-                                <option value="😊 良い">😊 良い</option>
-                                <option value="😐 普通">😐 普通</option>
-                                <option value="😢 悪い">😢 悪い</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label
-                                for="edit_entry_date"
-                                class="block text-sm font-medium text-gray-700"
-                                >日付</label
-                            >
-                            <input
-                                type="date"
-                                v-model="editForm.entry_date"
-                                id="edit_entry_date"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                class="block text-sm font-medium text-gray-700"
-                                >タグ</label
-                            >
-                            <div class="mt-1 flex flex-wrap gap-2">
-                                <button
-                                    v-for="tag in availableTags"
-                                    :key="tag"
-                                    type="button"
-                                    @click="toggleEditTag(tag)"
-                                    :class="[
-                                        'px-3 py-1 rounded-full text-sm transition-all duration-300',
-                                        editForm.tags.includes(tag)
-                                            ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
-                                    ]"
+                                <svg
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
                                 >
-                                    {{ tag }}
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"
+                                    ></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <form @submit.prevent="updateEntry" class="space-y-4">
+                            <div>
+                                <label
+                                    for="edit_content"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >内容</label
+                                >
+                                <textarea
+                                    v-model="editForm.content"
+                                    id="edit_content"
+                                    rows="4"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                ></textarea>
+                            </div>
+                            <div>
+                                <label
+                                    for="edit_mood"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >気分</label
+                                >
+                                <select
+                                    v-model="editForm.mood"
+                                    id="edit_mood"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                >
+                                    <option value="">選択してください</option>
+                                    <option value="😊 良い">😊 良い</option>
+                                    <option value="😐 普通">😐 普通</option>
+                                    <option value="😢 悪い">😢 悪い</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    for="edit_entry_date"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >日付</label
+                                >
+                                <input
+                                    type="date"
+                                    v-model="editForm.entry_date"
+                                    id="edit_entry_date"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                                    >タグ</label
+                                >
+                                <div class="mt-1 flex flex-wrap gap-2">
+                                    <button
+                                        v-for="tag in availableTags"
+                                        :key="tag"
+                                        type="button"
+                                        @click="toggleEditTag(tag)"
+                                        :class="[
+                                            'px-3 py-1 rounded-full text-sm transition-all duration-300',
+                                            editForm.tags.includes(tag)
+                                                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                                        ]"
+                                    >
+                                        {{ tag }}
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    @click="closeEditModal"
+                                    class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 hover:shadow"
+                                >
+                                    キャンセル
+                                </button>
+                                <button
+                                    type="submit"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 hover:shadow hover:scale-105"
+                                >
+                                    更新
                                 </button>
                             </div>
-                        </div>
-                        <div class="flex justify-end space-x-3">
-                            <button
-                                type="button"
-                                @click="closeEditModal"
-                                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all duration-300 hover:shadow"
-                            >
-                                キャンセル
-                            </button>
-                            <button
-                                type="submit"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 hover:shadow hover:scale-105"
-                            >
-                                更新
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </AuthenticatedLayout>

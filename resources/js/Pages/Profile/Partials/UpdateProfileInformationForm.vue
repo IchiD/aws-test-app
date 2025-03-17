@@ -25,10 +25,12 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">プロフィール情報</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                プロフィール情報
+            </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
-                アカウントのプロフィール情報とメールアドレスを更新します。
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                アカウントのプロフィール情報とメールアドレスを更新できます。
             </p>
         </header>
 
@@ -37,12 +39,16 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="name" value="名前" />
+                <InputLabel
+                    for="name"
+                    value="名前"
+                    class="text-gray-800 dark:text-gray-200"
+                />
 
                 <TextInput
                     id="name"
                     type="text"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                     v-model="form.name"
                     required
                     autofocus
@@ -53,12 +59,16 @@ const form = useForm({
             </div>
 
             <div>
-                <InputLabel for="email" value="メールアドレス" />
+                <InputLabel
+                    for="email"
+                    value="メール"
+                    class="text-gray-800 dark:text-gray-200"
+                />
 
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
+                    class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                     v-model="form.email"
                     required
                     autocomplete="username"
@@ -68,21 +78,21 @@ const form = useForm({
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800">
+                <p class="text-sm mt-2 text-gray-800 dark:text-gray-200">
                     メールアドレスが未確認です。
                     <Link
                         :href="route('verification.send')"
                         method="post"
                         as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                        確認メールを再送信するにはこちらをクリックしてください。
+                        ここをクリックして確認メールを再送信してください。
                     </Link>
                 </p>
 
                 <div
                     v-show="status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
+                    class="mt-2 font-medium text-sm text-green-600 dark:text-green-400"
                 >
                     新しい確認リンクがメールアドレスに送信されました。
                 </div>
@@ -99,7 +109,7 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600"
+                        class="text-sm text-gray-600 dark:text-gray-400"
                     >
                         保存しました。
                     </p>

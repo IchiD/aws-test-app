@@ -41,27 +41,27 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">アカウントの削除</h2>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                アカウント削除
+            </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
-                アカウントが削除されると、すべてのリソースとデータが完全に削除されます。
-                アカウントを削除する前に、保持したいデータや情報をダウンロードしてください。
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                アカウントを削除すると、すべてのリソースとデータが完全に削除されます。アカウントを削除する前に、保持したいデータや情報をダウンロードしてください。
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion"
-            >アカウントを削除</DangerButton
-        >
+        <DangerButton @click="confirmUserDeletion">アカウント削除</DangerButton>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
-                <h2 class="text-lg font-medium text-gray-900">
+                <h2
+                    class="text-lg font-medium text-gray-900 dark:text-gray-100"
+                >
                     本当にアカウントを削除しますか？
                 </h2>
 
-                <p class="mt-1 text-sm text-gray-600">
-                    アカウントが削除されると、すべてのリソースとデータが完全に削除されます。
-                    アカウントを完全に削除することを確認するために、パスワードを入力してください。
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    アカウントを削除すると、すべてのリソースとデータが完全に削除されます。パスワードを入力して、アカウントを完全に削除することを確認してください。
                 </p>
 
                 <div class="mt-6">
@@ -76,7 +76,7 @@ const closeModal = () => {
                         ref="passwordInput"
                         v-model="form.password"
                         type="password"
-                        class="mt-1 block w-3/4"
+                        class="mt-1 block w-3/4 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                         placeholder="パスワード"
                         @keyup.enter="deleteUser"
                     />
@@ -95,7 +95,7 @@ const closeModal = () => {
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
-                        アカウントを削除
+                        アカウント削除
                     </DangerButton>
                 </div>
             </div>
