@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm } from "@inertiajs/vue3";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, reactive } from "vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -13,12 +13,29 @@ const props = defineProps({
     },
 });
 
+// タスク配列をリアクティブにして、変更が直接UIに反映されるようにする
+const tasksList = reactive([...props.tasks]);
+
+// アニメーション用の状態
+const isLoaded = ref(false);
+const formVisible = ref(false);
+
+// ページ読み込み時にアニメーションを開始
+onMounted(() => {
+    setTimeout(() => {
+        isLoaded.value = true;
+        setTimeout(() => {
+            formVisible.value = true;
+        }, 300);
+    }, 100);
+});
+
 const sortOption = ref("created_desc"); // created_desc, created_asc, due_date
 const showCompleted = ref(true);
 const showIncomplete = ref(true);
 
 const filteredAndSortedTasks = computed(() => {
-    let result = [...props.tasks];
+    let result = [...tasksList];
 
     // フィルタリング
     result = result.filter((task) => {
@@ -76,7 +93,13 @@ const editingTask = ref(null);
 
 const submit = () => {
     form.post(route("tasks.store"), {
-        onSuccess: () => form.reset(),
+        onSuccess: (page) => {
+            // 新しく追加されたタスクをレスポンスから取得して、ローカルのリストに追加
+            if (page.props.flash && page.props.flash.task) {
+                tasksList.unshift(page.props.flash.task); // 先頭に追加
+            }
+            form.reset();
+        },
     });
 };
 
@@ -90,23 +113,84 @@ const startEditing = (task) => {
 
 const updateTask = (task) => {
     if (typeof task.completed === "boolean" && !editingTask.value) {
-        // チェックボックスの更新時は既存の値を保持
-        editForm.title = task.title;
-        editForm.description = task.description;
-        editForm.due_date = task.due_date;
-        editForm.completed = task.completed;
+        // チェックボックスの更新時は完了状態と必須データを含める
+        const updateData = {
+            title: task.title,
+            description: task.description || "",
+            completed: task.completed,
+            due_date: task.due_date,
+        };
+
+        // APIリクエスト送信
+        useForm(updateData)
+            .transform((data) => ({
+                ...data,
+                _method: "PUT", // Laravel は PUT メソッドをこの形で認識
+            }))
+            .post(route("tasks.update", task.id), {
+                forceFormData: true, // FormData としてデータを送信
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    console.log(
+                        "タスク更新成功:",
+                        task.title,
+                        "完了状態:",
+                        task.completed,
+                    );
+                },
+                onError: (errors) => {
+                    console.error("タスク更新エラー:", errors);
+                    // エラーが発生した場合は状態を元に戻す
+                    task.completed = !task.completed;
+                },
+            });
+    } else {
+        // 通常の編集フォームからの更新の場合
+        editForm
+            .transform((data) => ({
+                ...data,
+                _method: "PUT",
+            }))
+            .post(route("tasks.update", task.id), {
+                forceFormData: true,
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    // 成功したら編集中のタスクを更新
+                    const taskIndex = tasksList.findIndex(
+                        (t) => t.id === task.id,
+                    );
+                    if (taskIndex !== -1) {
+                        tasksList[taskIndex].title = editForm.title;
+                        tasksList[taskIndex].description = editForm.description;
+                        tasksList[taskIndex].due_date = editForm.due_date;
+                        tasksList[taskIndex].completed = editForm.completed;
+                    }
+
+                    editingTask.value = null;
+                    editForm.reset();
+                },
+            });
     }
-    editForm.put(route("tasks.update", task.id), {
-        onSuccess: () => {
-            editingTask.value = null;
-            editForm.reset();
-        },
-    });
 };
 
 const deleteTask = (task) => {
     if (confirm("本当にこのタスクを削除しますか？")) {
-        useForm().delete(route("tasks.destroy", task.id));
+        // ローカルのタスクリストからも削除（UI即時反映）
+        const taskIndex = tasksList.findIndex((t) => t.id === task.id);
+        if (taskIndex !== -1) {
+            tasksList.splice(taskIndex, 1);
+        }
+
+        // バックエンドにも通知
+        useForm().delete(route("tasks.destroy", task.id), {
+            onError: () => {
+                // エラーが発生した場合、再度タスクリストを取得するために
+                // ページをリロード
+                window.location.reload();
+            },
+        });
     }
 };
 </script>
@@ -125,10 +209,19 @@ const deleteTask = (task) => {
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6"
+                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 transition-all duration-500"
+                        :class="{ 'animate-slide-down': isLoaded }"
+                        :style="{ opacity: isLoaded ? 1 : 0 }"
                     >
                         <!-- タスク作成フォーム -->
-                        <form @submit.prevent="submit" class="mb-8">
+                        <form
+                            @submit.prevent="submit"
+                            class="mb-8 transition-all duration-500 transform overflow-hidden"
+                            :class="{
+                                'max-h-[500px] opacity-100': formVisible,
+                                'max-h-0 opacity-0': !formVisible,
+                            }"
+                        >
                             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
                                     <InputLabel for="title" value="タイトル" />
@@ -163,7 +256,10 @@ const deleteTask = (task) => {
                                 </div>
                             </div>
                             <div class="mt-4">
-                                <PrimaryButton :disabled="form.processing">
+                                <PrimaryButton
+                                    :disabled="form.processing"
+                                    class="transition-all duration-300 hover:shadow-md hover:scale-105"
+                                >
                                     タスクを追加
                                 </PrimaryButton>
                             </div>
@@ -171,7 +267,9 @@ const deleteTask = (task) => {
 
                         <!-- ソートとフィルターコントロール -->
                         <div
-                            class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6"
+                            class="mb-6 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 transition-all duration-500 opacity-0"
+                            :class="{ 'opacity-100': isLoaded }"
+                            :style="{ transitionDelay: '400ms' }"
                         >
                             <div class="flex items-center space-x-4">
                                 <label class="text-sm font-medium text-gray-700"
@@ -179,7 +277,7 @@ const deleteTask = (task) => {
                                 >
                                 <select
                                     v-model="sortOption"
-                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-300 hover:border-indigo-400"
                                 >
                                     <option value="created_desc">
                                         作成日時（新しい順）
@@ -201,7 +299,7 @@ const deleteTask = (task) => {
                                         <input
                                             type="checkbox"
                                             v-model="showIncomplete"
-                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                         />
                                         <span class="ml-2 text-sm text-gray-600"
                                             >未完了のタスク</span
@@ -211,7 +309,7 @@ const deleteTask = (task) => {
                                         <input
                                             type="checkbox"
                                             v-model="showCompleted"
-                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                         />
                                         <span class="ml-2 text-sm text-gray-600"
                                             >完了したタスク</span
@@ -224,15 +322,23 @@ const deleteTask = (task) => {
                         <!-- タスク一覧 -->
                         <div class="space-y-4">
                             <div
-                                v-for="task in filteredAndSortedTasks"
+                                v-for="(task, index) in filteredAndSortedTasks"
                                 :key="task.id"
-                                class="bg-gray-50 p-4 rounded-lg"
+                                class="bg-gray-50 p-4 rounded-lg transform transition-all duration-500 opacity-0"
+                                :class="{ 'animate-slide-up': isLoaded }"
+                                :style="{
+                                    transitionDelay: `${500 + index * 100}ms`,
+                                    opacity: isLoaded ? 1 : 0,
+                                    transform: isLoaded
+                                        ? 'translateY(0)'
+                                        : 'translateY(20px)',
+                                }"
                             >
                                 <div v-if="editingTask?.id === task.id">
                                     <!-- 編集フォーム -->
                                     <form
                                         @submit.prevent="updateTask(task)"
-                                        class="space-y-4"
+                                        class="space-y-4 animate-fade-in"
                                     >
                                         <div
                                             class="grid grid-cols-1 gap-4 md:grid-cols-2"
@@ -280,7 +386,7 @@ const deleteTask = (task) => {
                                                 <input
                                                     type="checkbox"
                                                     v-model="editForm.completed"
-                                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                                 />
                                                 <span class="ml-2">完了</span>
                                             </div>
@@ -288,12 +394,13 @@ const deleteTask = (task) => {
                                         <div class="flex space-x-2">
                                             <PrimaryButton
                                                 :disabled="editForm.processing"
+                                                class="transition-all duration-300 hover:shadow-md hover:scale-105"
                                             >
                                                 更新
                                             </PrimaryButton>
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                                class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-300 hover:shadow-md hover:scale-105"
                                                 @click="editingTask = null"
                                             >
                                                 キャンセル
@@ -311,19 +418,13 @@ const deleteTask = (task) => {
                                         >
                                             <input
                                                 type="checkbox"
-                                                :checked="task.completed"
-                                                @change="
-                                                    updateTask({
-                                                        ...task,
-                                                        completed:
-                                                            !task.completed,
-                                                    })
-                                                "
-                                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                                v-model="task.completed"
+                                                @change="updateTask(task)"
+                                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                             />
                                             <div>
                                                 <h3
-                                                    class="text-lg font-semibold"
+                                                    class="text-lg font-semibold transition-all duration-300"
                                                     :class="{
                                                         'line-through':
                                                             task.completed,
@@ -344,7 +445,7 @@ const deleteTask = (task) => {
                                                     期限:
                                                     {{
                                                         formatDateTime(
-                                                            task.due_date
+                                                            task.due_date,
                                                         )
                                                     }}
                                                 </p>
@@ -353,13 +454,13 @@ const deleteTask = (task) => {
                                         <div class="flex space-x-2">
                                             <button
                                                 @click="startEditing(task)"
-                                                class="text-indigo-600 hover:text-indigo-900"
+                                                class="text-indigo-600 hover:text-indigo-900 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50"
                                             >
                                                 編集
                                             </button>
                                             <button
                                                 @click="deleteTask(task)"
-                                                class="text-red-600 hover:text-red-900"
+                                                class="text-red-600 hover:text-red-900 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50"
                                             >
                                                 削除
                                             </button>

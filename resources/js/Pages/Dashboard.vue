@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const props = defineProps({
     recentTasks: Array,
@@ -9,6 +9,16 @@ const props = defineProps({
     recentEntries: Array,
     entriesByMonth: Array,
     taskStats: Object,
+});
+
+// アニメーション用の状態
+const isLoaded = ref(false);
+
+// ページ読み込み時にアニメーションを開始
+onMounted(() => {
+    setTimeout(() => {
+        isLoaded.value = true;
+    }, 100);
 });
 
 // 完了・未完了タスクの合計
@@ -83,7 +93,12 @@ const truncate = (text, length = 50) => {
                     <!-- タスク概要カード -->
                     <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div
-                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                            :class="{ 'animate-slide-in-left': isLoaded }"
+                            class="overflow-hidden bg-white opacity-0 shadow-sm sm:rounded-lg transition-all duration-500 transform"
+                            :style="{
+                                transitionDelay: '100ms',
+                                opacity: isLoaded ? 1 : 0,
+                            }"
                         >
                             <div class="border-b border-gray-200 bg-white p-6">
                                 <h3
@@ -94,7 +109,10 @@ const truncate = (text, length = 50) => {
                                 <div class="flex items-center justify-between">
                                     <div class="text-center">
                                         <div
-                                            class="text-3xl font-bold text-indigo-600"
+                                            class="text-3xl font-bold text-indigo-600 transition-all"
+                                            :class="{
+                                                'animate-bounce-in': isLoaded,
+                                            }"
                                         >
                                             {{ taskStats.incomplete }}
                                         </div>
@@ -104,7 +122,11 @@ const truncate = (text, length = 50) => {
                                     </div>
                                     <div class="text-center">
                                         <div
-                                            class="text-3xl font-bold text-green-600"
+                                            class="text-3xl font-bold text-green-600 transition-all"
+                                            :class="{
+                                                'animate-bounce-in': isLoaded,
+                                            }"
+                                            style="transition-delay: 200ms"
                                         >
                                             {{ taskStats.completed }}
                                         </div>
@@ -114,7 +136,11 @@ const truncate = (text, length = 50) => {
                                     </div>
                                     <div class="text-center">
                                         <div
-                                            class="text-3xl font-bold text-blue-600"
+                                            class="text-3xl font-bold text-blue-600 transition-all"
+                                            :class="{
+                                                'animate-bounce-in': isLoaded,
+                                            }"
+                                            style="transition-delay: 300ms"
                                         >
                                             {{ totalTasks }}
                                         </div>
@@ -140,9 +166,11 @@ const truncate = (text, length = 50) => {
                                         class="h-2 overflow-hidden rounded-full bg-gray-200"
                                     >
                                         <div
-                                            class="h-full bg-green-500"
+                                            class="h-full bg-green-500 transition-all duration-1000 ease-out"
                                             :style="{
-                                                width: `${completionRate}%`,
+                                                width: isLoaded
+                                                    ? `${completionRate}%`
+                                                    : '0%',
                                             }"
                                         ></div>
                                     </div>
@@ -152,7 +180,12 @@ const truncate = (text, length = 50) => {
 
                         <!-- 期限近いタスク -->
                         <div
-                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                            :class="{ 'animate-slide-in-left': isLoaded }"
+                            class="overflow-hidden bg-white opacity-0 shadow-sm sm:rounded-lg transition-all duration-500 transform"
+                            :style="{
+                                transitionDelay: '200ms',
+                                opacity: isLoaded ? 1 : 0,
+                            }"
                         >
                             <div class="border-b border-gray-200 bg-white p-6">
                                 <div class="mb-4 flex justify-between">
@@ -163,7 +196,7 @@ const truncate = (text, length = 50) => {
                                     </h3>
                                     <Link
                                         :href="route('tasks.index')"
-                                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                                        class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
                                         >すべて見る</Link
                                     >
                                 </div>
@@ -172,9 +205,14 @@ const truncate = (text, length = 50) => {
                                     class="space-y-3"
                                 >
                                     <div
-                                        v-for="task in upcomingTasks"
+                                        v-for="(task, index) in upcomingTasks"
                                         :key="task.id"
-                                        class="flex items-start justify-between border-b border-gray-100 pb-2"
+                                        class="flex items-start justify-between border-b border-gray-100 pb-2 opacity-0 transition-all duration-300"
+                                        :class="{ 'animate-fade-in': isLoaded }"
+                                        :style="{
+                                            transitionDelay: `${300 + index * 100}ms`,
+                                            opacity: isLoaded ? 1 : 0,
+                                        }"
                                     >
                                         <div>
                                             <div class="font-medium">
@@ -187,26 +225,26 @@ const truncate = (text, length = 50) => {
                                                     :class="{
                                                         'text-red-500':
                                                             new Date(
-                                                                task.due_date
+                                                                task.due_date,
                                                             ) < new Date(),
                                                         'text-orange-500':
                                                             new Date(
-                                                                task.due_date
+                                                                task.due_date,
                                                             ) <=
                                                                 new Date(
                                                                     new Date().setDate(
                                                                         new Date().getDate() +
-                                                                            1
-                                                                    )
+                                                                            1,
+                                                                    ),
                                                                 ) &&
                                                             new Date(
-                                                                task.due_date
+                                                                task.due_date,
                                                             ) >= new Date(),
                                                     }"
                                                 >
                                                     {{
                                                         formatDueDate(
-                                                            task.due_date
+                                                            task.due_date,
                                                         )
                                                     }}
                                                 </span>
@@ -225,7 +263,12 @@ const truncate = (text, length = 50) => {
 
                         <!-- 最近の日記 -->
                         <div
-                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                            :class="{ 'animate-slide-in-left': isLoaded }"
+                            class="overflow-hidden bg-white opacity-0 shadow-sm sm:rounded-lg transition-all duration-500 transform"
+                            :style="{
+                                transitionDelay: '300ms',
+                                opacity: isLoaded ? 1 : 0,
+                            }"
                         >
                             <div class="border-b border-gray-200 bg-white p-6">
                                 <div class="mb-4 flex justify-between">
@@ -236,7 +279,7 @@ const truncate = (text, length = 50) => {
                                     </h3>
                                     <Link
                                         :href="route('diary-entries.index')"
-                                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                                        class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
                                         >すべて見る</Link
                                     >
                                 </div>
@@ -245,9 +288,14 @@ const truncate = (text, length = 50) => {
                                     class="space-y-3"
                                 >
                                     <div
-                                        v-for="entry in recentEntries"
+                                        v-for="(entry, index) in recentEntries"
                                         :key="entry.id"
-                                        class="border-b border-gray-100 pb-2"
+                                        class="border-b border-gray-100 pb-2 opacity-0 transition-all duration-300"
+                                        :class="{ 'animate-fade-in': isLoaded }"
+                                        :style="{
+                                            transitionDelay: `${300 + index * 100}ms`,
+                                            opacity: isLoaded ? 1 : 0,
+                                        }"
                                     >
                                         <div class="flex justify-between">
                                             <div class="text-sm text-gray-500">
@@ -276,7 +324,12 @@ const truncate = (text, length = 50) => {
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <!-- 最近のタスク -->
                         <div
-                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                            :class="{ 'animate-slide-up': isLoaded }"
+                            class="overflow-hidden bg-white opacity-0 shadow-sm sm:rounded-lg transition-all duration-500 transform"
+                            :style="{
+                                transitionDelay: '400ms',
+                                opacity: isLoaded ? 1 : 0,
+                            }"
                         >
                             <div class="border-b border-gray-200 bg-white p-6">
                                 <div class="mb-4 flex justify-between">
@@ -287,7 +340,7 @@ const truncate = (text, length = 50) => {
                                     </h3>
                                     <Link
                                         :href="route('tasks.index')"
-                                        class="text-sm text-indigo-600 hover:text-indigo-800"
+                                        class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors"
                                         >すべて見る</Link
                                     >
                                 </div>
@@ -296,13 +349,18 @@ const truncate = (text, length = 50) => {
                                     class="divide-y divide-gray-100"
                                 >
                                     <div
-                                        v-for="task in recentTasks"
+                                        v-for="(task, index) in recentTasks"
                                         :key="task.id"
-                                        class="py-3"
+                                        class="py-3 opacity-0 transition-all duration-300"
+                                        :class="{ 'animate-fade-in': isLoaded }"
+                                        :style="{
+                                            transitionDelay: `${500 + index * 100}ms`,
+                                            opacity: isLoaded ? 1 : 0,
+                                        }"
                                     >
                                         <div class="flex items-center">
                                             <div
-                                                class="mr-3 h-3 w-3 rounded-full"
+                                                class="mr-3 h-3 w-3 rounded-full transition-all"
                                                 :class="{
                                                     'bg-green-500':
                                                         task.completed,
@@ -338,7 +396,12 @@ const truncate = (text, length = 50) => {
 
                         <!-- 月間の日記統計 -->
                         <div
-                            class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                            :class="{ 'animate-slide-up': isLoaded }"
+                            class="overflow-hidden bg-white opacity-0 shadow-sm sm:rounded-lg transition-all duration-500 transform"
+                            :style="{
+                                transitionDelay: '500ms',
+                                opacity: isLoaded ? 1 : 0,
+                            }"
                         >
                             <div class="border-b border-gray-200 bg-white p-6">
                                 <h3
@@ -351,9 +414,16 @@ const truncate = (text, length = 50) => {
                                     class="space-y-4"
                                 >
                                     <div
-                                        v-for="monthData in entriesByMonth"
+                                        v-for="(
+                                            monthData, index
+                                        ) in entriesByMonth"
                                         :key="monthData.month"
-                                        class="flex items-center"
+                                        class="flex items-center opacity-0 transition-all duration-500"
+                                        :class="{ 'animate-fade-in': isLoaded }"
+                                        :style="{
+                                            transitionDelay: `${600 + index * 100}ms`,
+                                            opacity: isLoaded ? 1 : 0,
+                                        }"
                                     >
                                         <div class="w-28 font-medium">
                                             {{ formatMonth(monthData.month) }}
@@ -363,12 +433,15 @@ const truncate = (text, length = 50) => {
                                                 class="h-6 overflow-hidden rounded-full bg-gray-100"
                                             >
                                                 <div
-                                                    class="h-full bg-indigo-500"
+                                                    class="h-full bg-indigo-500 transition-all duration-1000 ease-out"
                                                     :style="{
-                                                        width: `${Math.min(
-                                                            100,
-                                                            monthData.count * 5
-                                                        )}%`,
+                                                        width: isLoaded
+                                                            ? `${Math.min(
+                                                                  100,
+                                                                  monthData.count *
+                                                                      5,
+                                                              )}%`
+                                                            : '0%',
                                                     }"
                                                 ></div>
                                             </div>
@@ -390,7 +463,12 @@ const truncate = (text, length = 50) => {
 
                     <!-- クイックリンク -->
                     <div
-                        class="mt-6 overflow-hidden bg-white shadow-sm sm:rounded-lg"
+                        :class="{ 'animate-slide-up': isLoaded }"
+                        class="mt-6 overflow-hidden bg-white opacity-0 shadow-sm sm:rounded-lg transition-all duration-500 transform"
+                        :style="{
+                            transitionDelay: '600ms',
+                            opacity: isLoaded ? 1 : 0,
+                        }"
                     >
                         <div class="border-b border-gray-200 bg-white p-6">
                             <h3 class="mb-4 text-lg font-medium text-gray-900">
@@ -399,7 +477,7 @@ const truncate = (text, length = 50) => {
                             <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
                                 <Link
                                     :href="route('tasks.index')"
-                                    class="flex items-center justify-center rounded-lg bg-indigo-50 p-4 text-center transition hover:bg-indigo-100"
+                                    class="flex items-center justify-center rounded-lg bg-indigo-50 p-4 text-center transition-all duration-300 hover:bg-indigo-100 hover:shadow-md hover:scale-105"
                                 >
                                     <div>
                                         <div
@@ -414,7 +492,7 @@ const truncate = (text, length = 50) => {
                                 </Link>
                                 <Link
                                     :href="route('diary-entries.index')"
-                                    class="flex items-center justify-center rounded-lg bg-green-50 p-4 text-center transition hover:bg-green-100"
+                                    class="flex items-center justify-center rounded-lg bg-green-50 p-4 text-center transition-all duration-300 hover:bg-green-100 hover:shadow-md hover:scale-105"
                                 >
                                     <div>
                                         <div
@@ -429,7 +507,7 @@ const truncate = (text, length = 50) => {
                                 </Link>
                                 <Link
                                     :href="route('profile.edit')"
-                                    class="flex items-center justify-center rounded-lg bg-orange-50 p-4 text-center transition hover:bg-orange-100"
+                                    class="flex items-center justify-center rounded-lg bg-orange-50 p-4 text-center transition-all duration-300 hover:bg-orange-100 hover:shadow-md hover:scale-105"
                                 >
                                     <div>
                                         <div
@@ -443,7 +521,7 @@ const truncate = (text, length = 50) => {
                                     </div>
                                 </Link>
                                 <div
-                                    class="flex items-center justify-center rounded-lg bg-blue-50 p-4 text-center"
+                                    class="flex items-center justify-center rounded-lg bg-blue-50 p-4 text-center transition-all duration-300 hover:bg-blue-100 hover:shadow-md hover:scale-105"
                                 >
                                     <div>
                                         <div
@@ -457,7 +535,7 @@ const truncate = (text, length = 50) => {
                                         <div class="mt-1 text-xs text-gray-500">
                                             {{
                                                 new Date().toLocaleDateString(
-                                                    "ja-JP"
+                                                    "ja-JP",
                                                 )
                                             }}
                                         </div>

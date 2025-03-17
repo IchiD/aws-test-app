@@ -80,6 +80,7 @@ class TaskController extends Controller
 
     $task->update($validated);
 
+    // Inertia経由のリクエストの場合、リダイレクトして最新の状態を返す
     return redirect(route('tasks.index'));
   }
 

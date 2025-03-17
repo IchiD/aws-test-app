@@ -46,7 +46,7 @@ class DiaryEntryController extends Controller
 
     // デフォルトのタグ一覧
     $defaultTags = [
-      '仕事',
+      '仕事a',
       '家族',
       '趣味',
       '健康',
