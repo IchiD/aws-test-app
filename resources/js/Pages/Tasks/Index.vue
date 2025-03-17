@@ -201,7 +201,9 @@ const deleteTask = (task) => {
 
         <AuthenticatedLayout>
             <template #header>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <h2
+                    class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight"
+                >
                     タスク管理
                 </h2>
             </template>
@@ -209,7 +211,7 @@ const deleteTask = (task) => {
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 transition-all duration-500"
+                        class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 transition-all duration-500"
                         :class="{ 'animate-slide-down': isLoaded }"
                         :style="{ opacity: isLoaded ? 1 : 0 }"
                     >
@@ -224,12 +226,16 @@ const deleteTask = (task) => {
                         >
                             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                 <div>
-                                    <InputLabel for="title" value="タイトル" />
+                                    <InputLabel
+                                        for="title"
+                                        value="タイトル"
+                                        class="text-gray-800 dark:text-gray-200"
+                                    />
                                     <TextInput
                                         id="title"
                                         v-model="form.title"
                                         type="text"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                                         required
                                     />
                                 </div>
@@ -237,21 +243,26 @@ const deleteTask = (task) => {
                                     <InputLabel
                                         for="description"
                                         value="説明"
+                                        class="text-gray-800 dark:text-gray-200"
                                     />
                                     <TextInput
                                         id="description"
                                         v-model="form.description"
                                         type="text"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                                     />
                                 </div>
                                 <div>
-                                    <InputLabel for="due_date" value="期限" />
+                                    <InputLabel
+                                        for="due_date"
+                                        value="期限"
+                                        class="text-gray-800 dark:text-gray-200"
+                                    />
                                     <TextInput
                                         id="due_date"
                                         v-model="form.due_date"
                                         type="datetime-local"
-                                        class="mt-1 block w-full"
+                                        class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                                     />
                                 </div>
                             </div>
@@ -272,12 +283,13 @@ const deleteTask = (task) => {
                             :style="{ transitionDelay: '400ms' }"
                         >
                             <div class="flex items-center space-x-4">
-                                <label class="text-sm font-medium text-gray-700"
+                                <label
+                                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
                                     >ソート:</label
                                 >
                                 <select
                                     v-model="sortOption"
-                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-300 hover:border-indigo-400"
+                                    class="rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-300 hover:border-indigo-400 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
                                 >
                                     <option value="created_desc">
                                         作成日時（新しい順）
@@ -291,7 +303,8 @@ const deleteTask = (task) => {
                                 </select>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <label class="text-sm font-medium text-gray-700"
+                                <label
+                                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
                                     >表示:</label
                                 >
                                 <div class="flex space-x-4">
@@ -299,9 +312,10 @@ const deleteTask = (task) => {
                                         <input
                                             type="checkbox"
                                             v-model="showIncomplete"
-                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
+                                            class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                         />
-                                        <span class="ml-2 text-sm text-gray-600"
+                                        <span
+                                            class="ml-2 text-sm text-gray-600 dark:text-gray-400"
                                             >未完了のタスク</span
                                         >
                                     </label>
@@ -309,9 +323,10 @@ const deleteTask = (task) => {
                                         <input
                                             type="checkbox"
                                             v-model="showCompleted"
-                                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
+                                            class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                         />
-                                        <span class="ml-2 text-sm text-gray-600"
+                                        <span
+                                            class="ml-2 text-sm text-gray-600 dark:text-gray-400"
                                             >完了したタスク</span
                                         >
                                     </label>
@@ -324,7 +339,7 @@ const deleteTask = (task) => {
                             <div
                                 v-for="(task, index) in filteredAndSortedTasks"
                                 :key="task.id"
-                                class="bg-gray-50 p-4 rounded-lg transform transition-all duration-500 opacity-0"
+                                class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg transform transition-all duration-500 opacity-0"
                                 :class="{ 'animate-slide-up': isLoaded }"
                                 :style="{
                                     transitionDelay: `${500 + index * 100}ms`,
@@ -347,12 +362,13 @@ const deleteTask = (task) => {
                                                 <InputLabel
                                                     for="edit_title"
                                                     value="タイトル"
+                                                    class="text-gray-800 dark:text-gray-200"
                                                 />
                                                 <TextInput
                                                     id="edit_title"
                                                     v-model="editForm.title"
                                                     type="text"
-                                                    class="mt-1 block w-full"
+                                                    class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                                                     required
                                                 />
                                             </div>
@@ -360,6 +376,7 @@ const deleteTask = (task) => {
                                                 <InputLabel
                                                     for="edit_description"
                                                     value="説明"
+                                                    class="text-gray-800 dark:text-gray-200"
                                                 />
                                                 <TextInput
                                                     id="edit_description"
@@ -367,28 +384,32 @@ const deleteTask = (task) => {
                                                         editForm.description
                                                     "
                                                     type="text"
-                                                    class="mt-1 block w-full"
+                                                    class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                                                 />
                                             </div>
                                             <div>
                                                 <InputLabel
                                                     for="edit_due_date"
                                                     value="期限"
+                                                    class="text-gray-800 dark:text-gray-200"
                                                 />
                                                 <TextInput
                                                     id="edit_due_date"
                                                     v-model="editForm.due_date"
                                                     type="datetime-local"
-                                                    class="mt-1 block w-full"
+                                                    class="mt-1 block w-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700"
                                                 />
                                             </div>
                                             <div class="flex items-center">
                                                 <input
                                                     type="checkbox"
                                                     v-model="editForm.completed"
-                                                    class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
+                                                    class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                                 />
-                                                <span class="ml-2">完了</span>
+                                                <span
+                                                    class="ml-2 text-gray-800 dark:text-gray-200"
+                                                    >完了</span
+                                                >
                                             </div>
                                         </div>
                                         <div class="flex space-x-2">
@@ -400,7 +421,7 @@ const deleteTask = (task) => {
                                             </PrimaryButton>
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-300 hover:shadow-md hover:scale-105"
+                                                class="inline-flex items-center px-4 py-2 bg-gray-300 dark:bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-gray-700 dark:text-gray-200 uppercase tracking-widest hover:bg-gray-400 dark:hover:bg-gray-500 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-300 hover:shadow-md hover:scale-105"
                                                 @click="editingTask = null"
                                             >
                                                 キャンセル
@@ -420,11 +441,11 @@ const deleteTask = (task) => {
                                                 type="checkbox"
                                                 v-model="task.completed"
                                                 @change="updateTask(task)"
-                                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
+                                                class="rounded border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 transition-all duration-300"
                                             />
                                             <div>
                                                 <h3
-                                                    class="text-lg font-semibold transition-all duration-300"
+                                                    class="text-lg font-semibold transition-all duration-300 text-gray-800 dark:text-gray-200"
                                                     :class="{
                                                         'line-through':
                                                             task.completed,
@@ -433,13 +454,13 @@ const deleteTask = (task) => {
                                                     {{ task.title }}
                                                 </h3>
                                                 <p
-                                                    class="text-gray-600"
+                                                    class="text-gray-600 dark:text-gray-400"
                                                     v-if="task.description"
                                                 >
                                                     {{ task.description }}
                                                 </p>
                                                 <p
-                                                    class="text-sm text-gray-500"
+                                                    class="text-sm text-gray-500 dark:text-gray-500"
                                                     v-if="task.due_date"
                                                 >
                                                     期限:
@@ -454,13 +475,13 @@ const deleteTask = (task) => {
                                         <div class="flex space-x-2">
                                             <button
                                                 @click="startEditing(task)"
-                                                class="text-indigo-600 hover:text-indigo-900 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50"
+                                                class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
                                             >
                                                 編集
                                             </button>
                                             <button
                                                 @click="deleteTask(task)"
-                                                class="text-red-600 hover:text-red-900 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50"
+                                                class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30"
                                             >
                                                 削除
                                             </button>
