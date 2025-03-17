@@ -7,22 +7,22 @@
 
 ## 機能
 
--   日記の作成、編集、削除
--   タグによる分類
--   気分の記録（😊 良い、😐 普通、😢 悪い）
--   日付による検索
--   キーワード検索
--   月別表示
--   レスポンシブデザイン
+- 日記の作成、編集、削除
+- タグによる分類
+- 気分の記録（😊 良い、😐 普通、😢 悪い）
+- 日付による検索
+- キーワード検索
+- 月別表示
+- レスポンシブデザイン
 
 ## 技術スタック
 
--   Laravel 12.2.0
--   PHP 8.4.5
--   MySQL 8.0
--   Vue.js 3
--   Tailwind CSS
--   Inertia.js
+- Laravel 12.2.0
+- PHP 8.4.5
+- MySQL 8.0
+- Vue.js 3
+- Tailwind CSS
+- Inertia.js
 
 ## 開発環境のセットアップ
 
@@ -49,7 +49,7 @@ php artisan key:generate
 
 4. データベースの設定:
 
--   .env ファイルでデータベース接続情報を設定
+- .env ファイルでデータベース接続情報を設定
 
 ```bash
 php artisan migrate
@@ -66,10 +66,10 @@ npm run dev
 
 ### 前提条件
 
--   AWS アカウント
--   EC2 インスタンス（t2.micro）
--   RDS インスタンス（MySQL）
--   ドメイン名
+- AWS アカウント
+- EC2 インスタンス（t2.micro）
+- RDS インスタンス（MySQL）
+- ドメイン名
 
 ### 初回デプロイ時の設定
 
@@ -158,6 +158,15 @@ sudo composer install --no-dev --optimize-autoloader
 sudo npm ci
 sudo npm run build
 
+# データベースマイグレーションの実行（スキーマの変更がある場合）
+php artisan migrate
+
+# キャッシュのクリア
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+
 # パーミッションの設定
 sudo chown -R nginx:nginx .
 sudo chmod -R 775 storage bootstrap/cache
@@ -167,12 +176,41 @@ sudo systemctl restart php-fpm
 sudo systemctl restart nginx
 ```
 
+注意: データベースの変更を含むデプロイの場合
+
+- マイグレーションを実行する前に、重要なデータのバックアップを取ることを推奨します
+- 本番環境でマイグレーションを実行する際は、以下のコマンドを使用することで安全に実行できます：
+
+    ```bash
+    # マイグレーションの確認（実際の変更は行わない）
+    php artisan migrate --pretend
+
+    # 本番環境での安全なマイグレーション実行
+    php artisan migrate --force
+
+    # 問題が発生した場合のロールバック
+    php artisan migrate:rollback
+    ```
+
+- 大規模なデータベース変更の場合は、メンテナンスモードの使用を検討してください：
+
+    ```bash
+    # メンテナンスモードの開始
+    php artisan down
+
+    # データベース変更の実行
+    php artisan migrate
+
+    # メンテナンスモードの終了
+    php artisan up
+    ```
+
 ### 注意事項
 
--   コードをプッシュする前に、必ずローカルでテストを行う
--   本番環境の.env ファイルは変更しない
--   デプロイ後は、アプリケーションが正常に動作することを確認
--   ブラウザのキャッシュをクリアする必要がある場合がある
+- コードをプッシュする前に、必ずローカルでテストを行う
+- 本番環境の.env ファイルは変更しない
+- デプロイ後は、アプリケーションが正常に動作することを確認
+- ブラウザのキャッシュをクリアする必要がある場合がある
 
 ## トラブルシューティング
 
@@ -180,27 +218,27 @@ sudo systemctl restart nginx
 
 1. 500 エラー:
 
--   ストレージディレクトリのパーミッション確認
--   ログファイルの確認（/var/log/nginx/error.log, storage/logs/laravel.log）
--   .env 設定の確認
+- ストレージディレクトリのパーミッション確認
+- ログファイルの確認（/var/log/nginx/error.log, storage/logs/laravel.log）
+- .env 設定の確認
 
 2. 403 エラー:
 
--   Nginx の設定確認
--   ファイルパーミッションの確認
+- Nginx の設定確認
+- ファイルパーミッションの確認
 
 3. データベース接続エラー:
 
--   RDS 接続情報の確認
--   セキュリティグループの設定確認
+- RDS 接続情報の確認
+- セキュリティグループの設定確認
 
 ## セキュリティ設定
 
--   本番環境では`APP_DEBUG=false`に設定
--   適切なファイルパーミッションの設定
--   定期的なセキュリティアップデート
--   強力なパスワードの使用
--   ファイアウォールの適切な設定
+- 本番環境では`APP_DEBUG=false`に設定
+- 適切なファイルパーミッションの設定
+- 定期的なセキュリティアップデート
+- 強力なパスワードの使用
+- ファイアウォールの適切な設定
 
 ## ライセンス
 

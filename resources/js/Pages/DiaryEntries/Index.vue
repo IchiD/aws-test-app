@@ -65,7 +65,7 @@
                                     v-model="form.content"
                                     id="content"
                                     rows="4"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 dark:bg-gray-700 dark:text-gray-100"
                                     required
                                 ></textarea>
                             </div>
@@ -87,7 +87,7 @@
                                 <select
                                     v-model="form.mood"
                                     id="mood"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 dark:bg-gray-700 dark:text-gray-100"
                                 >
                                     <option value="">選択してください</option>
                                     <option value="😊 良い">😊 良い</option>
@@ -114,7 +114,7 @@
                                     type="date"
                                     v-model="form.entry_date"
                                     id="entry_date"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 dark:bg-gray-700 dark:text-gray-100"
                                     required
                                 />
                             </div>
@@ -142,7 +142,7 @@
                                             'px-3 py-1 rounded-full text-sm transition-all duration-300',
                                             form.tags.includes(tag)
                                                 ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                                                : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500',
                                         ]"
                                         :style="{
                                             transitionDelay: `${450 + index * 20}ms`,
@@ -206,7 +206,7 @@
                             <div class="flex gap-2">
                                 <select
                                     v-model="filters.year"
-                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 hover:border-indigo-400"
+                                    class="rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 hover:border-indigo-400 dark:bg-gray-700 dark:text-gray-100"
                                     @change="filterByDate"
                                 >
                                     <option value="">年を選択</option>
@@ -220,7 +220,7 @@
                                 </select>
                                 <select
                                     v-model="filters.month"
-                                    class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 hover:border-indigo-400"
+                                    class="rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 hover:border-indigo-400 dark:bg-gray-700 dark:text-gray-100"
                                     @change="filterByDate"
                                 >
                                     <option value="">月を選択</option>
@@ -242,7 +242,7 @@
                                     type="text"
                                     v-model="filters.search"
                                     placeholder="日記を検索..."
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 hover:border-indigo-400"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 hover:border-indigo-400 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
                                     @input="debouncedSearch"
                                 />
                             </div>
@@ -257,7 +257,7 @@
                                         'px-3 py-1 rounded-full text-sm transition-all duration-300',
                                         filters.tags.includes(tag)
                                             ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                                            : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500',
                                     ]"
                                 >
                                     {{ tag }}
@@ -274,7 +274,7 @@
                                         'px-3 py-1 rounded-full text-sm flex items-center gap-2 transition-all duration-300',
                                         filters.mood === stat.mood
                                             ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                                            : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500',
                                     ]"
                                 >
                                     <span>{{ stat.mood }}</span>
@@ -306,7 +306,7 @@
                             }"
                         >
                             <div
-                                class="p-4 bg-gray-50 border-b border-gray-200 dark:border-gray-700"
+                                class="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700"
                             >
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-gray-100"
@@ -426,7 +426,7 @@
                                     v-model="editForm.content"
                                     id="edit_content"
                                     rows="4"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 dark:bg-gray-700 dark:text-gray-100"
                                 ></textarea>
                             </div>
                             <div>
@@ -438,7 +438,7 @@
                                 <select
                                     v-model="editForm.mood"
                                     id="edit_mood"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 dark:bg-gray-700 dark:text-gray-100"
                                 >
                                     <option value="">選択してください</option>
                                     <option value="😊 良い">😊 良い</option>
@@ -456,7 +456,7 @@
                                     type="date"
                                     v-model="editForm.entry_date"
                                     id="edit_entry_date"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300"
+                                    class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all duration-300 dark:bg-gray-700 dark:text-gray-100"
                                 />
                             </div>
                             <div>
@@ -474,7 +474,7 @@
                                             'px-3 py-1 rounded-full text-sm transition-all duration-300',
                                             editForm.tags.includes(tag)
                                                 ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                                                : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500',
                                         ]"
                                     >
                                         {{ tag }}

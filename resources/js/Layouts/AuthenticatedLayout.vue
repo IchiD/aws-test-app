@@ -1,5 +1,6 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { usePage } from "@inertiajs/vue3";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
 import CustomAppLogo from "@/Components/CustomAppLogo.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -7,9 +8,44 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import DarkModeToggle from "@/Components/DarkModeToggle.vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 
 const showingNavigationDropdown = ref(false);
+const isDarkMode = ref(false);
+
+onMounted(() => {
+    // ユーザーの保存された設定を読み込む
+    const user = usePage().props.auth.user;
+    isDarkMode.value = user.dark_mode;
+    applyDarkMode(isDarkMode.value);
+});
+
+const toggleDarkMode = () => {
+    isDarkMode.value = !isDarkMode.value;
+    applyDarkMode(isDarkMode.value);
+
+    router.patch(
+        route("dark-mode.update"),
+        { dark_mode: isDarkMode.value },
+        {
+            preserveState: true,
+            preserveScroll: true,
+            onError: () => {
+                // エラー時は設定を元に戻す
+                isDarkMode.value = !isDarkMode.value;
+                applyDarkMode(isDarkMode.value);
+            },
+        },
+    );
+};
+
+const applyDarkMode = (isDark) => {
+    if (isDark) {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+};
 </script>
 
 <template>
@@ -44,7 +80,7 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
-                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    class="text-gray-100 hover:text-white transition-all duration-300 ease-in-out font-medium"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     Dashboard
@@ -52,7 +88,7 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink
                                     :href="route('tasks.index')"
                                     :active="route().current('tasks.index')"
-                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    class="text-gray-100 hover:text-white transition-all duration-300 ease-in-out font-medium"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     タスク管理
@@ -62,7 +98,7 @@ const showingNavigationDropdown = ref(false);
                                     :active="
                                         route().current('diary-entries.index')
                                     "
-                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    class="text-gray-100 hover:text-white transition-all duration-300 ease-in-out font-medium"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     日記
@@ -73,7 +109,39 @@ const showingNavigationDropdown = ref(false);
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
                             <!-- ダークモードトグルボタン -->
                             <div class="mr-4">
-                                <DarkModeToggle />
+                                <button
+                                    @click="toggleDarkMode"
+                                    class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-100 bg-white/10 hover:bg-white/20 focus:outline-none transition ease-in-out duration-150"
+                                >
+                                    <svg
+                                        v-if="!isDarkMode"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                                        />
+                                    </svg>
+                                    <svg
+                                        v-else
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
 
                             <!-- Settings Dropdown -->
@@ -83,7 +151,7 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-opacity-20 bg-white px-3 py-2 text-sm font-medium leading-4 text-white transition duration-150 ease-in-out hover:bg-opacity-30 focus:outline-none"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white/10 px-3 py-2 text-sm font-medium leading-4 text-gray-100 transition duration-150 ease-in-out hover:bg-white/20 focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -128,7 +196,7 @@ const showingNavigationDropdown = ref(false);
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-200 transition duration-150 ease-in-out hover:bg-indigo-700 hover:text-white focus:bg-indigo-700 focus:text-white focus:outline-none"
+                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-100 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white focus:outline-none"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -176,21 +244,21 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
-                            class="text-white hover:bg-indigo-700"
+                            class="text-gray-100 hover:bg-white/10"
                         >
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('tasks.index')"
                             :active="route().current('tasks.index')"
-                            class="text-white hover:bg-indigo-700"
+                            class="text-gray-100 hover:bg-white/10"
                         >
                             タスク管理
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('diary-entries.index')"
                             :active="route().current('diary-entries.index')"
-                            class="text-white hover:bg-indigo-700"
+                            class="text-gray-100 hover:bg-white/10"
                         >
                             日記
                         </ResponsiveNavLink>
@@ -199,7 +267,7 @@ const showingNavigationDropdown = ref(false);
                     <!-- Responsive Settings Options -->
                     <div class="border-t border-indigo-700 pb-1 pt-4">
                         <div class="px-4">
-                            <div class="text-base font-medium text-white">
+                            <div class="text-base font-medium text-gray-100">
                                 {{ $page.props.auth.user.name }}
                             </div>
                             <div class="text-sm font-medium text-indigo-200">
@@ -210,7 +278,7 @@ const showingNavigationDropdown = ref(false);
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink
                                 :href="route('profile.edit')"
-                                class="text-white hover:bg-indigo-700"
+                                class="text-gray-100 hover:bg-white/10"
                             >
                                 Profile
                             </ResponsiveNavLink>
@@ -218,17 +286,49 @@ const showingNavigationDropdown = ref(false);
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
-                                class="text-white hover:bg-indigo-700"
+                                class="text-gray-100 hover:bg-white/10"
                             >
                                 Log Out
                             </ResponsiveNavLink>
                             <!-- モバイル用ダークモードトグル -->
                             <div class="flex items-center px-4 py-2">
                                 <span
-                                    class="text-sm font-medium text-white mr-2"
+                                    class="text-sm font-medium text-gray-100 mr-2"
                                     >ダークモード</span
                                 >
-                                <DarkModeToggle />
+                                <button
+                                    @click="toggleDarkMode"
+                                    class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-100 bg-white/10 hover:bg-white/20 focus:outline-none transition ease-in-out duration-150"
+                                >
+                                    <svg
+                                        v-if="!isDarkMode"
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                                        />
+                                    </svg>
+                                    <svg
+                                        v-else
+                                        class="h-5 w-5"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"
+                                        />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
                     </div>
