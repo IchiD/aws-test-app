@@ -212,6 +212,41 @@ sudo systemctl restart nginx
 - デプロイ後は、アプリケーションが正常に動作することを確認
 - ブラウザのキャッシュをクリアする必要がある場合がある
 
+## 本番環境での注意事項
+
+### ディレクトリ権限の設定
+
+本番環境でアプリケーションを実行する際は、以下のディレクトリに適切な書き込み権限が必要です：
+
+```bash
+# Webサーバーユーザー（通常はwww-dataなど）に適切な権限を付与する
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+
+# または、より安全な方法として、あなたのユーザーをwebサーバーのグループに追加して共有権限を設定
+sudo usermod -a -G www-data yourusername
+sudo chown -R yourusername:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+```
+
+これらのコマンドはサーバー上で実行する必要があります。特に以下のエラーが発生した場合、上記の権限設定を確認してください：
+
+```
+Failed to open stream: Permission denied in /var/www/...
+```
+
+### キャッシュのクリア
+
+デプロイ後や設定変更後は、キャッシュをクリアすることをお勧めします：
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+php artisan optimize:clear
+```
+
 ## トラブルシューティング
 
 ### よくある問題と解決方法
@@ -299,3 +334,60 @@ Remote-SSH を使用する際は、以下のセキュリティ対策を必ず実
 2. GitHub にプッシュ
 3. CI/CD パイプラインを通じてデプロイ
 4. Remote-SSH は緊急時やデバッグ時のみ使用
+
+## phpMyAdminでのデータベース管理
+
+phpMyAdminを使用して本番環境のデータベースを管理することができます。
+
+### アクセス方法
+
+1. ブラウザで以下のURLにアクセスします：
+
+```
+https://da.dvg.jp/phpmyadmin
+```
+
+2. ログイン情報を確認するには、EC2インスタンスにSSH接続して.envファイルからデータベース設定を取得します：
+
+```bash
+# EC2インスタンスに接続
+ssh -i ~/.ssh/test-app-key.pem ec2-user@ec2-54-252-196-67.ap-southeast-2.compute.amazonaws.com
+
+# アプリケーションディレクトリに移動
+cd /var/www/test-app
+
+# データベース接続情報を表示
+cat .env | grep DB_
+```
+
+表示された情報から、以下の値を確認できます：
+
+- `DB_USERNAME`: データベースのユーザー名
+- `DB_PASSWORD`: データベースのパスワード
+- `DB_HOST`: データベースホスト（通常はRDSのエンドポイント）
+- `DB_DATABASE`: データベース名
+
+3. ログイン画面が表示されたら、上記で確認した情報を入力します：
+    - ユーザー名: `DB_USERNAME`の値
+    - パスワード: `DB_PASSWORD`の値
+
+### 主な操作
+
+- **データベースの選択**: 左側のパネルからデータベース名をクリックします
+- **テーブルの表示**: データベースを選択後、テーブル一覧が表示されます
+- **レコードの表示/編集**: テーブル名をクリックし、「参照」タブでレコードを確認できます
+- **SQL実行**: 「SQL」タブでカスタムSQLクエリを実行できます
+- **バックアップ作成**: 「エクスポート」タブでデータベースのバックアップを作成できます
+- **データインポート**: 「インポート」タブでSQLファイルからデータをインポートできます
+
+### 注意事項
+
+- 本番環境のデータベースを操作する際は十分に注意してください
+- 重要なデータに対する変更を行う前には必ずバックアップを取ってください
+- `users`テーブルのパスワードは暗号化されているため、直接編集しないでください
+- 大規模な変更を行う場合は、アプリケーションをメンテナンスモードにすることを検討してください:
+    ```bash
+    php artisan down   # メンテナンスモード開始
+    # データベース操作を実行
+    php artisan up     # メンテナンスモード終了
+    ```
