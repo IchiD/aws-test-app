@@ -11,41 +11,47 @@ import DarkModeToggle from "@/Components/DarkModeToggle.vue";
 import { Link, router } from "@inertiajs/vue3";
 
 const showingNavigationDropdown = ref(false);
-const isDarkMode = ref(false);
+const darkMode = ref(
+    usePage().props.auth.user.dark_mode ??
+        window.matchMedia("(prefers-color-scheme: dark)").matches,
+);
 
 onMounted(() => {
-    // ユーザーの保存された設定を読み込む
-    const user = usePage().props.auth.user;
-    isDarkMode.value = user.dark_mode;
-    applyDarkMode(isDarkMode.value);
+    applyDarkMode();
 });
 
-const toggleDarkMode = () => {
-    isDarkMode.value = !isDarkMode.value;
-    applyDarkMode(isDarkMode.value);
-
-    router.patch(
-        route("dark-mode.update"),
-        { dark_mode: isDarkMode.value },
-        {
-            preserveState: true,
-            preserveScroll: true,
-            onError: () => {
-                // エラー時は設定を元に戻す
-                isDarkMode.value = !isDarkMode.value;
-                applyDarkMode(isDarkMode.value);
-            },
-        },
-    );
-};
-
-const applyDarkMode = (isDark) => {
-    if (isDark) {
+const applyDarkMode = () => {
+    if (darkMode.value) {
         document.documentElement.classList.add("dark");
     } else {
         document.documentElement.classList.remove("dark");
     }
 };
+
+const toggleDarkMode = async () => {
+    try {
+        darkMode.value = !darkMode.value;
+        applyDarkMode();
+        await router.patch(route("dark-mode.update"), {
+            dark_mode: darkMode.value,
+        });
+    } catch (error) {
+        // Revert the change if the update fails
+        darkMode.value = !darkMode.value;
+        applyDarkMode();
+        console.error("Failed to update dark mode:", error);
+    }
+};
+
+watch(
+    () => usePage().props.auth.user.dark_mode,
+    (newValue) => {
+        if (newValue !== undefined) {
+            darkMode.value = newValue;
+            applyDarkMode();
+        }
+    },
+);
 </script>
 
 <template>
@@ -80,7 +86,7 @@ const applyDarkMode = (isDark) => {
                                 <NavLink
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
-                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
+                                    class="text-white hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     Dashboard
@@ -88,7 +94,7 @@ const applyDarkMode = (isDark) => {
                                 <NavLink
                                     :href="route('tasks.index')"
                                     :active="route().current('tasks.index')"
-                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
+                                    class="text-white hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     タスク管理
@@ -98,7 +104,7 @@ const applyDarkMode = (isDark) => {
                                     :active="
                                         route().current('diary-entries.index')
                                     "
-                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
+                                    class="text-white hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     日記
@@ -114,7 +120,7 @@ const applyDarkMode = (isDark) => {
                                     class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-100 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                 >
                                     <svg
-                                        v-if="!isDarkMode"
+                                        v-if="!darkMode"
                                         class="h-5 w-5"
                                         fill="none"
                                         viewBox="0 0 24 24"
@@ -301,7 +307,7 @@ const applyDarkMode = (isDark) => {
                                     class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-100 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                 >
                                     <svg
-                                        v-if="!isDarkMode"
+                                        v-if="!darkMode"
                                         class="h-5 w-5"
                                         fill="none"
                                         viewBox="0 0 24 24"

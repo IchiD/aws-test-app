@@ -306,7 +306,7 @@
                             }"
                         >
                             <div
-                                class="p-4 bg-gray-50 border-b border-gray-200 dark:border-gray-700"
+                                class="p-4 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700"
                             >
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-gray-100"
@@ -359,13 +359,13 @@
                                     <div class="flex justify-end space-x-2">
                                         <button
                                             @click="editEntry(entry)"
-                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
                                         >
                                             編集
                                         </button>
                                         <button
                                             @click="destroy(entry.id)"
-                                            class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50"
+                                            class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-all duration-300 hover:scale-110 px-3 py-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30"
                                         >
                                             削除
                                         </button>
@@ -688,6 +688,7 @@ const formatMonthYear = (monthYear) => {
 
 // 編集モーダルの状態
 const showEditModal = ref(false);
+const isModalContentVisible = ref(false);
 const editForm = ref({
     id: null,
     content: "",
@@ -706,18 +707,26 @@ const editEntry = (entry) => {
         entry_date: entry.entry_date,
     };
     showEditModal.value = true;
+    // モーダルを表示した後に内容を表示するためのアニメーション
+    setTimeout(() => {
+        isModalContentVisible.value = true;
+    }, 50);
 };
 
 // 編集モーダルを閉じる
 const closeEditModal = () => {
-    showEditModal.value = false;
-    editForm.value = {
-        id: null,
-        content: "",
-        mood: "",
-        tags: [],
-        entry_date: "",
-    };
+    isModalContentVisible.value = false;
+    // アニメーションが終わってからモーダル自体を閉じる
+    setTimeout(() => {
+        showEditModal.value = false;
+        editForm.value = {
+            id: null,
+            content: "",
+            mood: "",
+            tags: [],
+            entry_date: "",
+        };
+    }, 300);
 };
 
 // タグの切り替え（編集フォーム用）

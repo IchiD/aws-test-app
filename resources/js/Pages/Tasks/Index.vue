@@ -298,10 +298,6 @@ const deleteTask = (task) => {
                             :style="{ transitionDelay: '400ms' }"
                         >
                             <div class="flex items-center space-x-4">
-                                <label
-                                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                                    >ソート:</label
-                                >
                                 <select
                                     v-model="sortOption"
                                     class="rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 transition-all duration-300 hover:border-indigo-400 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
@@ -318,10 +314,6 @@ const deleteTask = (task) => {
                                 </select>
                             </div>
                             <div class="flex items-center space-x-4">
-                                <label
-                                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                                    >表示:</label
-                                >
                                 <div class="flex space-x-4">
                                     <label class="inline-flex items-center">
                                         <input
