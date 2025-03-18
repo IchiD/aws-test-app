@@ -306,7 +306,7 @@
                             }"
                         >
                             <div
-                                class="p-4 bg-gray-50 dark:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700"
+                                class="p-4 bg-gray-50 border-b border-gray-200 dark:border-gray-700"
                             >
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-gray-100"

@@ -80,7 +80,7 @@ const applyDarkMode = (isDark) => {
                                 <NavLink
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
-                                    class="text-gray-100 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     Dashboard
@@ -88,7 +88,7 @@ const applyDarkMode = (isDark) => {
                                 <NavLink
                                     :href="route('tasks.index')"
                                     :active="route().current('tasks.index')"
-                                    class="text-gray-100 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     タスク管理
@@ -98,7 +98,7 @@ const applyDarkMode = (isDark) => {
                                     :active="
                                         route().current('diary-entries.index')
                                     "
-                                    class="text-gray-100 hover:text-white transition-all duration-300 ease-in-out font-medium"
+                                    class="text-gray-200 hover:text-white transition-all duration-300 ease-in-out font-medium dark:text-gray-100 dark:hover:text-white"
                                     active-class="border-b-2 border-pink-400 text-white"
                                 >
                                     日記
@@ -111,7 +111,7 @@ const applyDarkMode = (isDark) => {
                             <div class="mr-4">
                                 <button
                                     @click="toggleDarkMode"
-                                    class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-100 bg-white/10 hover:bg-white/20 focus:outline-none transition ease-in-out duration-150"
+                                    class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-100 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                 >
                                     <svg
                                         v-if="!isDarkMode"
@@ -151,7 +151,7 @@ const applyDarkMode = (isDark) => {
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white/10 px-3 py-2 text-sm font-medium leading-4 text-gray-100 transition duration-150 ease-in-out hover:bg-white/20 focus:outline-none"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-opacity-20 bg-white px-3 py-2 text-sm font-medium leading-4 text-white dark:text-gray-100 transition duration-150 ease-in-out hover:bg-opacity-30 focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
@@ -196,7 +196,7 @@ const applyDarkMode = (isDark) => {
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-100 transition duration-150 ease-in-out hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white focus:outline-none"
+                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-200 transition duration-150 ease-in-out hover:bg-indigo-700 hover:text-white focus:bg-indigo-700 focus:text-white focus:outline-none"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -244,21 +244,21 @@ const applyDarkMode = (isDark) => {
                         <ResponsiveNavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
-                            class="text-gray-100 hover:bg-white/10"
+                            class="text-white dark:text-gray-100 hover:bg-indigo-700"
                         >
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('tasks.index')"
                             :active="route().current('tasks.index')"
-                            class="text-gray-100 hover:bg-white/10"
+                            class="text-white dark:text-gray-100 hover:bg-indigo-700"
                         >
                             タスク管理
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('diary-entries.index')"
                             :active="route().current('diary-entries.index')"
-                            class="text-gray-100 hover:bg-white/10"
+                            class="text-white dark:text-gray-100 hover:bg-indigo-700"
                         >
                             日記
                         </ResponsiveNavLink>
@@ -267,7 +267,7 @@ const applyDarkMode = (isDark) => {
                     <!-- Responsive Settings Options -->
                     <div class="border-t border-indigo-700 pb-1 pt-4">
                         <div class="px-4">
-                            <div class="text-base font-medium text-gray-100">
+                            <div class="text-base font-medium text-white">
                                 {{ $page.props.auth.user.name }}
                             </div>
                             <div class="text-sm font-medium text-indigo-200">
@@ -278,7 +278,7 @@ const applyDarkMode = (isDark) => {
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink
                                 :href="route('profile.edit')"
-                                class="text-gray-100 hover:bg-white/10"
+                                class="text-white dark:text-gray-100 hover:bg-indigo-700"
                             >
                                 Profile
                             </ResponsiveNavLink>
@@ -286,19 +286,19 @@ const applyDarkMode = (isDark) => {
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
-                                class="text-gray-100 hover:bg-white/10"
+                                class="text-white dark:text-gray-100 hover:bg-indigo-700"
                             >
                                 Log Out
                             </ResponsiveNavLink>
                             <!-- モバイル用ダークモードトグル -->
                             <div class="flex items-center px-4 py-2">
                                 <span
-                                    class="text-sm font-medium text-gray-100 mr-2"
+                                    class="text-sm font-medium text-white mr-2"
                                     >ダークモード</span
                                 >
                                 <button
                                     @click="toggleDarkMode"
-                                    class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-100 bg-white/10 hover:bg-white/20 focus:outline-none transition ease-in-out duration-150"
+                                    class="ml-3 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-100 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150"
                                 >
                                     <svg
                                         v-if="!isDarkMode"
